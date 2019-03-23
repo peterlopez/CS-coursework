@@ -1,0 +1,18 @@
+# lines starting with '#' will be ignored
+#
+# format should be as follows
+#
+# only one number per line
+# in the order specified below
+#
+# line 1: number of rows
+# line 2: number of seats per row
+# line 3: default price per seat
+# line 4: list of special row prices space separated (ex. R7$15 R8$20)
+# line 5: list of blocked seats space separated (ex. R12S10 R11S8)
+##################
+10
+20
+11
+R7$15 R8$20
+R7S1 R8S2 R1S1
