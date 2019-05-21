@@ -23,10 +23,6 @@ const string HIST_FILE = "calc.txt";
 // Number of lines displayed for history
 const int HIST_SIZE = 5;
 
-string getOperationLeft(const string &operationStr, const char &operatorType);
-
-string getOperationRight(const string &operationStr, const char &operatorType);
-
 /**
  *
  * Perform series of math operations
@@ -248,10 +244,8 @@ double doOperation(const string &operationStr)
     // (A)ddition
     while (newOperationStr.find('+') != string::npos)
     {
-        string left = getOperationLeft(newOperationStr, '+');
-        string right = getOperationRight(newOperationStr, '+');
-        localResult = stod(left) + stod(right);
-
+        localResult = doSimpleOperation(newOperationStr, '+');
+        return localResult;
         // Substitute back in
         newOperationStr = operationStr.substr(0, operationStr.find_first_of('+')) + to_string(localResult) + operationStr.substr(operationStr.find_first_of(')') + 1);
     }
@@ -266,27 +260,22 @@ double doOperation(const string &operationStr)
     return 0.00;
 }
 
-string getOperationLeft(const string &operationStr, const char &operatorType)
+double doSimpleOperation(const string &operationStr, const char &operatorType)
 {
-    string left = operationStr.substr(0, operationStr.find_first_of(operatorType));
-    if (left.size() > 1) {
-        left = left.substr(left.find_last_not_of("0123456789.") + 1);
-    }
-    return left;
-}
+    double left, right, result = 0;
+    string leftStr, rightStr;
 
-string getOperationRight(const string &operationStr, const char &operatorType)
-{
-    string right = operationStr.substr(operationStr.find_first_of(operatorType) + 1);
-    if (right.size() > 1) {
+    leftStr = operationStr.substr(0, operationStr.find_first_of(operatorType));
+    if (leftStr.size() > 1) {
+        leftStr = leftStr.substr(leftStr.find_last_not_of("0123456789.") + 1);
+    }
+    rightStr = operationStr.substr(operationStr.find_first_of('+') + 1);
+    if (rightStr.size() > 1) {
         // TODO
     }
-    return right;
-}
 
-double doSimpleOperation(double left, double right, const char &operatorType)
-{
-    double result;
+    left = stod(leftStr);
+    right = stod(rightStr);
 
     switch(operatorType)
     {
