@@ -56,10 +56,15 @@ double doOperation(const string &operationStr);
 double doSimpleOperation(const string &operationStr, const char &operatorType);
 
 /**
- * Print out list of history items
+ * Print out list of most recent history items
  * number of items according to HIST_SIZE
  */
-void displayHistory(vector<string> hist);
+void displayRecentHistory(vector<string> hist);
+
+/**
+ * Print out list of all history items
+ */
+void displayAllHistory(vector<string> hist);
 
 /**
  * Read history file
@@ -99,6 +104,7 @@ void mainMenu(vector<string> &hist)
 {
     const string CODE_EXIT = "exit";
     const string CODE_CLEAR = "clear";
+    const string CODE_HIST = "history";
 
     string operation = "";
     double result = 0;
@@ -107,7 +113,7 @@ void mainMenu(vector<string> &hist)
     {
         system("clear");
         cout << "Welcome to Calculator" << endl << endl;
-        displayHistory(hist);
+        displayRecentHistory(hist);
 
         cout << "Please input operation: ";
         string input;
@@ -116,6 +122,9 @@ void mainMenu(vector<string> &hist)
 
         if (operation == CODE_CLEAR) {
             clearHistory();
+        }
+        else if (operation == CODE_HIST) {
+            displayAllHistory();
         }
         else if (operation.at(0) == 'H') {
             int histNum = stoi(string(operation.begin() + 1, operation.end()));
@@ -152,7 +161,7 @@ void clearHistory()
     histFile.open(HIST_FILE, ios::out | ios::trunc);
     histFile.close();
 }
-void displayHistory(vector<string> hist)
+void displayRecentHistory(vector<string> hist)
 {
     if (hist.empty()) {
         cout << "No history" << endl << endl;
@@ -168,6 +177,16 @@ void displayHistory(vector<string> hist)
         for (vector<string>::iterator it = hist.end() - HIST_SIZE; it < hist.end(); it++) {
             cout << 'H' << it - hist.begin() + 1 << '\t' << *it << endl;
         }
+    }
+    cout << endl;
+}
+void displayAllHistory(vector<string> hist)
+{
+    if (hist.empty()) {
+        cout << "No history" << endl << endl;
+    }
+    for(int i = 0; i < hist.size(); i++) {
+        cout << 'H' << i+1 << '\t' << hist.at(i) << endl;
     }
     cout << endl;
 }
