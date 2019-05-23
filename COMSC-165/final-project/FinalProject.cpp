@@ -128,7 +128,7 @@ void mainMenu(vector<string> &hist)
             cout << endl << "Press enter to continue..";
             getline(cin, input);
         }
-        else if (toupper(operation.at(0)) == 'H') {
+        else if (operation.size() > 0 && toupper(operation.at(0)) == 'H') {
             int histNum = stoi(string(operation.begin() + 1, operation.end()));
             if (histNum > hist.size() || histNum < 0) {
                 cout << "No history entry for 'H" << histNum << "'" << endl;
@@ -430,7 +430,7 @@ bool isValidExpression(const string expression)
     bool result = false;
 
     string allowedChars = "0123456789.+-*/^sqrt ";
-    if (expression.find_first_not_of(allowedChars) == string::npos) {
+    if (expression.size() > 0 && expression.find_first_not_of(allowedChars) == string::npos) {
         if (expression.find("exit"))
         result = true;
     }
