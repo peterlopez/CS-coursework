@@ -273,7 +273,6 @@ double doOperation(const string &operationStr)
     {
         // Extract and calculate operation within parenthesis
         localExpression = string(newOperationStr.str(), newOperationStr.str().find_first_of('(') + 1, newOperationStr.str().find_first_of(')') - newOperationStr.str().find_first_of('(') - 1);
-//        cout << "doing expression in parenthesis: '" << localExpression << '\'' << endl;
         localResult = doOperation(localExpression);
 
         // Substitute result back in
@@ -283,8 +282,6 @@ double doOperation(const string &operationStr)
         newOperationStr << fixed << setprecision(2) << localResult;
         newOperationStr << oldOperationStr.substr(oldOperationStr.find_first_of(')') + 1);
     }
-//    cout << "parenthesis done, new string: '" << newOperationStr.str() << '\'' << endl;
-//    cout << "-----------------" << endl;
 
     // -----------------
     // Do square root (E)xponents
@@ -309,13 +306,8 @@ double doOperation(const string &operationStr)
             }
             rightStr = rightStr.substr(0, rightStr.size() - end);
         }
-//        cout << "rightStr: " << rightStr << endl;
-//        cout << "substituting back into '" << newOperationStr.str() << '\'' << endl;
-//        cout << "start: " << start << endl;
-//        cout << "end: " << end << endl;
 
         localResult = sqrt(stod(rightStr));
-//        cout << localResult << endl;
 
         oldOperationStr = newOperationStr.str();
         newOperationStr.str("");
@@ -352,21 +344,28 @@ double doOperation(const string &operationStr)
             // Find end of expression (right-hand side)
             //
             end = operatorLoc + 1;
-//        cout << "end: " << end << endl;
+//            cout << "end: " << end << endl;
+
             rightStr = newOperationStr.str().substr(operatorLoc + 1);
-//        cout << "rightStr: " << rightStr << endl;
+//            cout << "rightStr: " << rightStr << endl;
+
             if (rightStr.size() > 1) {
                 int nextOperation = rightStr.find_first_not_of("0123456789.~");
                 if (nextOperation == string::npos) {
+                    // no next operator, right is rest of rightStr
                     end = operatorLoc + 1 + rightStr.size();
-//                cout << "end: " << end << endl;
-                } else {
-                    end = operatorLoc + 1 + nextOperation;
-//                cout << "end: " << end << endl;
+//                    cout << "end: " << end << endl;
                 }
-//            cout << "nextOperation: " << nextOperation << endl;
-                rightStr = rightStr.substr(0, rightStr.size() - end);
-//            cout << "rightStr: " << rightStr << endl;
+                else {
+                    // found next operator, set end to its index
+//                    cout << "nextOperation: " << nextOperation << endl;
+                    end = operatorLoc + 1 + nextOperation;
+//                    cout << "end: " << end << endl;
+                    rightStr = rightStr.substr(0, nextOperation);
+                }
+
+//                cout << "rightStr.size(): " << rightStr.size() << endl;
+//                cout << "rightStr: " << rightStr << endl;
             }
 
             //
