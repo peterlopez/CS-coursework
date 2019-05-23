@@ -109,6 +109,9 @@ void mainMenu(vector<string> &hist)
     string operation = "";
     double result = 0;
 
+    doOperation("1.1+(1.2+2.2)-1.1+5.1");
+    return;
+
     while (operation != CODE_EXIT)
     {
         system("clear");
@@ -124,7 +127,7 @@ void mainMenu(vector<string> &hist)
             clearHistory();
         }
         else if (operation == CODE_HIST) {
-            displayAllHistory();
+            displayAllHistory(hist);
         }
         else if (operation.at(0) == 'H') {
             int histNum = stoi(string(operation.begin() + 1, operation.end()));
@@ -220,7 +223,7 @@ void saveHistory(const vector<string> &hist)
 double doOperation(const string &operationStr)
 {
     cout << endl << "-----------------" << endl;
-    cout << "Doing operation on: " << operationStr << endl;
+    cout << "Parsing operation: " << operationStr << endl;
 
     // when each step is solved the answer
     // is substituted back into newOperationStr
@@ -232,15 +235,15 @@ double doOperation(const string &operationStr)
     double localResult;
 
     // Remove all spaces
-    //
+    // TODO
 
     // -----------------
     // (P)arenthesis
     while (newOperationStr.find('(') != string::npos && newOperationStr.find(')') != string::npos)
     {
         localExpression = string(operationStr, operationStr.find_first_of('(') + 1, operationStr.find_first_of(')') - operationStr.find_first_of('(') - 1);
-        cout << "local expression: " << localExpression << endl;
-
+        cout << "found expression in parenthesis: " << localExpression << endl;
+        cout << "result: " << stod(localExpression) << endl;
         // Substitute back in
         localResult = doOperation(localExpression);
         newOperationStr = operationStr.substr(0, operationStr.find_first_of('(')) + to_string(localResult) + operationStr.substr(operationStr.find_first_of(')') + 1);
@@ -249,34 +252,75 @@ double doOperation(const string &operationStr)
 
     // -----------------
     // (E)xponents
-
-
     // -----------------
     // (M)ultiplication
-
-
     // -----------------
     // (D)ivision
-
-
     // -----------------
     // (A)ddition
-    while (newOperationStr.find('+') != string::npos)
+    string operatorType = "+-";
+    while (newOperationStr.find_first_of(operatorType) != string::npos)
     {
-        localResult = doSimpleOperation(newOperationStr, '+');
-        return localResult;
-        // Substitute back in
-        newOperationStr = operationStr.substr(0, operationStr.find_first_of('+')) + to_string(localResult) + operationStr.substr(operationStr.find_first_of(')') + 1);
+        // Left and right sides of operation
+        string leftStr, rightStr;
+        double left, right, result = 0;
+
+        // Indexes within newOperationStr
+        // used to substitute in result
+        int start, end;
+
+        //
+        int operatorLoc = newOperationStr.find_first_of(operatorType);
+
+        start = operatorLoc - 1;
+        leftStr = newOperationStr.substr(0, operatorLoc);
+        if (leftStr.size() > 1) {
+            start = leftStr.find_last_not_of("0123456789.") + 1;
+            leftStr = leftStr.substr(start);
+        }
+
+
+        end = operatorLoc + 1;
+
+
+        rightStr = newOperationStr.substr(operatorLoc + 1);
+        if (rightStr.size() > 1) {
+            int nextOperation = rightStr.find_first_not_of("0123456789.");
+            rightStr = rightStr.substr(0, end);
+            end = (nextOperation == string::npos) ? operatorLoc + rightStr.size() + 1 : nextOperation;
+        }
+
+        switch(newOperationStr.at(operatorLoc))
+        {
+            case '+':
+                localResult = stod(leftStr) + stod(rightStr);
+                break;
+            case '-':
+                localResult = stod(leftStr) - stod(rightStr);
+                break;
+        }
+
+        cout << "----" << endl;
+        cout << "Doing '" << newOperationStr.at(operatorLoc) << '\'' << endl;
+        cout << "left: " << leftStr << endl;
+        cout << "right: " << rightStr << endl;
+        cout << "result: " << localResult << endl;
+
+        cout << "----" << endl;
+        cout << "Substituting back into '" << newOperationStr << "'" << endl;
+        cout << "start: " << start << endl;
+        cout << "end: " << end << endl;
+
+        // Substitute result back in
+        newOperationStr = newOperationStr.substr(0, start) + to_string(localResult) + newOperationStr.substr(end);
+
+        cout << "after substitution: '" << newOperationStr << '\'' << endl;
+
+        string input;
+        getline(cin, input);
     }
 
-    // -----------------
-    // (S)ubtraction
-//    while (newOperationStr.find('-') != string::npos)
-//    {
-//
-//    }
-
-    return 0.00;
+    return stod(newOperationStr);
 }
 
 double doSimpleOperation(const string &operationStr, const char &operatorType)
@@ -296,23 +340,6 @@ double doSimpleOperation(const string &operationStr, const char &operatorType)
     left = stod(leftStr);
     right = stod(rightStr);
 
-    switch(operatorType)
-    {
-        case '*':
-            result = left * right;
-            break;
-        case '/':
-            result = left / right;
-            break;
-        case '+':
-            result = (double) left + (double) right;
-            break;
-        case '-':
-            result = left - right;
-            break;
-        default:
-            break;
-    }
 
 //    cout << "Doing " << operatorType << endl;
 //    cout << "leftStr: " << leftStr << endl;
