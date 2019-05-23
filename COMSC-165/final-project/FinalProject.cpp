@@ -238,9 +238,6 @@ void saveHistory(const vector<string> &hist)
 
 double doOperation(const string &operationStr)
 {
-//    cout << "-----------------" << endl;
-//    cout << "Start" << endl << "parsing operation: '" << operationStr << '\'' << endl;
-
     //
     // when each step is solved the answer
     // is substituted back into newOperationStr
@@ -353,28 +350,18 @@ double doOperation(const string &operationStr)
             // Find end of expression (right-hand side)
             //
             end = operatorLoc + 1;
-//            cout << "end: " << end << endl;
-
             rightStr = newOperationStr.str().substr(operatorLoc + 1);
-//            cout << "rightStr: " << rightStr << endl;
-
             if (rightStr.size() > 1) {
                 int nextOperation = rightStr.find_first_not_of("0123456789.~");
                 if (nextOperation == string::npos) {
                     // no next operator, right is rest of rightStr
                     end = operatorLoc + 1 + rightStr.size();
-//                    cout << "end: " << end << endl;
                 }
                 else {
                     // found next operator, set end to its index
-//                    cout << "nextOperation: " << nextOperation << endl;
                     end = operatorLoc + 1 + nextOperation;
-//                    cout << "end: " << end << endl;
                     rightStr = rightStr.substr(0, nextOperation);
                 }
-
-//                cout << "rightStr.size(): " << rightStr.size() << endl;
-//                cout << "rightStr: " << rightStr << endl;
             }
 
             //
@@ -409,16 +396,6 @@ double doOperation(const string &operationStr)
                     break;
             }
 
-//            cout << "----" << endl;
-//            cout << "Calculating '" << localExpression << '\'' << endl;
-//            cout << "left: " << leftStr << endl;
-//            cout << "right: " << rightStr << endl;
-//            cout << "result: " << localResult << endl;
-//            cout << endl;
-//            cout << "Substituting back into '" << newOperationStr.str() << "'" << endl;
-//            cout << "start: " << start << endl;
-//            cout << "end: " << end << endl;
-
             //
             // Substitute result back in
             //
@@ -435,11 +412,6 @@ double doOperation(const string &operationStr)
             if (end < oldOperationStr.size()) {
                 newOperationStr << oldOperationStr.substr(end);
             }
-
-//            cout << "after substitution: '" << newOperationStr.str() << '\'' << endl;
-//            cout << "----" << endl;
-//            string input;
-//            getline(cin, input);
         }
     }
 
