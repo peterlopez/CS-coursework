@@ -28,37 +28,13 @@ const int HIST_SIZE = 5;
  * Perform series of math operations
  * according to PEMDAS
  *
- * 1. Repeatedly search for the specific operation (paren, exp, mult, div, add, sub)
- * 2. Find first (leftmost) instance of specific operation
- * 3. Calculate result of specific operation
- * 4. Substitute result back into string containing all operations
+ *  1. Find index of first (leftmost) operator within string of operations (i.e. '*', '/', '+', '-')
  *
+ *  2. Extract left and right sides of expression
  *
-    // Steps:
-    //  1. Find index of first power or sqrt within newOperationStr
-    //
-    //  2. Find left and right sides of expression
-    //     (for sqrt there is no left side)
-    //
-    //  3. Calculate result
-    //
-    //  4. Substitute result back into newOperationStr
+ *  3. Calculate result of expression
  *
- *
-    // Steps:
-    //  1. Find index of first operator within newOperationStr
-    //
-    //  2. Find left and right sides of expression
-    //     and thus start and end of entire expression within newOperationStr
-    //
-    //  3. Calculate expression result
-    //
-    //  4. Substitute result back into newOperationStr
-
- * 12 - 5 + (13 + 1)
- * 12 - 5 + 14
- * 7 + 14
- * 21
+ *  4. Substitute result back into string containing all operations
  *
  */
 double doOperation(const string &operationStr);
@@ -97,6 +73,11 @@ void clearHistory();
 void displayResult(const string &operation, const double &result);
 
 /**
+ * Checks user input is a valid mathematical expression
+ */
+bool isValidExpression(const string expression);
+
+/**
  * Removes all spaces from given string
  */
 string stripSpaces(string str);
@@ -133,26 +114,46 @@ void mainMenu(vector<string> &hist)
         getline(cin, input);
         stringstream(input) >> operation;
 
-        if (operation == CODE_CLEAR) {
+        if (operation == CODE_EXIT) {
+            // do nothing
+        }
+        else if (operation == CODE_CLEAR) {
             clearHistory();
+            cout << "History cleared." << endl;
+            cout << endl << "Press enter to continue..";
+            getline(cin, input);
         }
         else if (operation == CODE_HIST) {
             displayAllHistory(hist);
+            cout << endl << "Press enter to continue..";
+            getline(cin, input);
         }
         else if (toupper(operation.at(0)) == 'H') {
             int histNum = stoi(string(operation.begin() + 1, operation.end()));
             if (histNum > hist.size() || histNum < 0) {
-                cout << "No history entry for 'H" << histNum << "'" << endl << endl;
+                cout << "No history entry for 'H" << histNum << "'" << endl;
+                cout << endl << "Press enter to continue..";
+                getline(cin, input);
             }
             else {
                 result = doOperation(hist.at(histNum - 1));
                 displayResult(hist.at(histNum - 1), result);
+                cout << endl << "Press enter to continue..";
+                getline(cin, input);
             }
         }
         else {
-            result = doOperation(operation);
-            displayResult(operation, result);
-            hist.push_back(operation);
+            if (isValidExpression(operation)) {
+                result = doOperation(operation);
+                displayResult(operation, result);
+                hist.push_back(operation);
+                cout << endl << "Press enter to continue..";
+                getline(cin, input);
+            } else {
+                cout << "Invalid operation!" << endl;
+                cout << endl << "Press enter to continue..";
+                getline(cin, input);
+            }
         }
     }
 
@@ -165,7 +166,7 @@ void displayResult(const string &operation, const double &result)
     cout << "Result: " << operation << " = " << fixed << setprecision(2) << result;
     cout << '\t' << "Hex: " << hex << static_cast<int>(result);
     cout << '\t' << "Oct: " << oct << static_cast<int>(result);
-    cout << '\t' << "Bin: " << bitset<4>(result) << endl << endl;
+    cout << '\t' << "Bin: " << bitset<4>(result) << endl;
 }
 
 string stripSpaces(string str) {
@@ -275,7 +276,9 @@ double doOperation(const string &operationStr)
         localExpression = string(newOperationStr.str(), newOperationStr.str().find_first_of('(') + 1, newOperationStr.str().find_first_of(')') - newOperationStr.str().find_first_of('(') - 1);
         localResult = doOperation(localExpression);
 
+        //
         // Substitute result back in
+        //
         oldOperationStr = newOperationStr.str();
         newOperationStr.str("");
         newOperationStr << oldOperationStr.substr(0, oldOperationStr.find_first_of('('));
@@ -307,8 +310,14 @@ double doOperation(const string &operationStr)
             rightStr = rightStr.substr(0, rightStr.size() - end);
         }
 
+        //
+        // Calculate square root
+        //
         localResult = sqrt(stod(rightStr));
 
+        //
+        // Substitute result back in
+        //
         oldOperationStr = newOperationStr.str();
         newOperationStr.str("");
         newOperationStr << oldOperationStr.substr(0, start);
@@ -322,7 +331,7 @@ double doOperation(const string &operationStr)
     // Do (E)xponents, (M)ultiplication, (D)ivision, (A)ddition, (S)ubtraction
     //
     vector<string> operators = {"^", "*/", "+-"};
-    for (string operatorType : operators) {
+    for (const string &operatorType : operators) {
         while (newOperationStr.str().find_first_of(operatorType) != string::npos) {
 
             //
@@ -433,8 +442,26 @@ double doOperation(const string &operationStr)
 //            getline(cin, input);
         }
     }
-//    cout << "Returning '" << stod(newOperationStr.str()) << "' from '" << operationStr << '\'' << endl;
-//    cout << "----" << endl;
 
-    return stod(newOperationStr.str());
+    // If result is negative must replace tilde '~'
+    if (newOperationStr.str().find('~') != string::npos) {
+        oldOperationStr = newOperationStr.str().substr(1);
+        return -stod(oldOperationStr);
+    } else {
+        return stod(newOperationStr.str());
+    }
+}
+
+bool isValidExpression(const string expression)
+{
+    // assume the worst
+    bool result = false;
+
+    string allowedChars = "0123456789.+-*/^sqrt";
+    if (expression.find_first_not_of(allowedChars) == string::npos) {
+        if (expression.find("exit"))
+        result = true;
+    }
+
+    return result;
 }
