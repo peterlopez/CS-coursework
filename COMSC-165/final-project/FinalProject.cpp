@@ -33,6 +33,28 @@ const int HIST_SIZE = 5;
  * 3. Calculate result of specific operation
  * 4. Substitute result back into string containing all operations
  *
+ *
+    // Steps:
+    //  1. Find index of first power or sqrt within newOperationStr
+    //
+    //  2. Find left and right sides of expression
+    //     (for sqrt there is no left side)
+    //
+    //  3. Calculate result
+    //
+    //  4. Substitute result back into newOperationStr
+ *
+ *
+    // Steps:
+    //  1. Find index of first operator within newOperationStr
+    //
+    //  2. Find left and right sides of expression
+    //     and thus start and end of entire expression within newOperationStr
+    //
+    //  3. Calculate expression result
+    //
+    //  4. Substitute result back into newOperationStr
+
  * 12 - 5 + (13 + 1)
  * 12 - 5 + 14
  * 7 + 14
@@ -73,6 +95,11 @@ void clearHistory();
  * decimal, hex, and binary format
  */
 void displayResult(const string &operation, const double &result);
+
+/**
+ * Removes all spaces from given string
+ */
+string stripSpaces(string str);
 
 /**
  * Prompts user for calculator input
@@ -135,10 +162,15 @@ void mainMenu(vector<string> &hist)
 
 void displayResult(const string &operation, const double &result)
 {
-    cout << "Result: " << operation << " = " << fixed << setprecision(3) << result;
+    cout << "Result: " << operation << " = " << fixed << setprecision(2) << result;
     cout << '\t' << "Hex: " << hex << static_cast<int>(result);
     cout << '\t' << "Oct: " << oct << static_cast<int>(result);
     cout << '\t' << "Bin: " << bitset<4>(result) << endl << endl;
+}
+
+string stripSpaces(string str) {
+    str.erase(remove(str.begin(), str.end(), ' '), str.end());
+    return str;
 }
 
 void clearHistory()
@@ -223,11 +255,20 @@ double doOperation(const string &operationStr)
     string localExpression;
     double localResult;
 
+    // Left and right sides of operation
+    string leftStr, rightStr;
+    double left, right = 0;
+
+    // Indexes within newOperationStr
+    // used to substitute in result
+    int start, end;
+
     // Remove all spaces
-    // TODO
+    newOperationStr.str( stripSpaces(newOperationStr.str()) );
 
     // -----------------
-    // (P)arenthesis
+    // Do (P)arenthesis
+    //
     while (newOperationStr.str().find('(') != string::npos && newOperationStr.str().find(')') != string::npos)
     {
         // Extract and calculate operation within parenthesis
@@ -246,25 +287,51 @@ double doOperation(const string &operationStr)
 //    cout << "-----------------" << endl;
 
     // -----------------
-    // (E)xponents
-    // -----------------
+    // Do square root (E)xponents
+    //
+    while (newOperationStr.str().find("sqrt") != string::npos)
+    {
+        int operatorLoc = newOperationStr.str().find_first_of("sqrt");
+        start = operatorLoc;
+        operatorLoc += 3; // go to end of word
 
+        //
+        // Find end of expression (right-hand side)
+        //
+        end = operatorLoc + 1;
+        rightStr = newOperationStr.str().substr(operatorLoc + 1);
+        if (rightStr.size() > 1) {
+            int nextOperation = rightStr.find_first_not_of("0123456789.~");
+            if (nextOperation == string::npos) {
+                end = operatorLoc + 1 + rightStr.size();
+            } else {
+                end = operatorLoc + 1 + nextOperation;
+            }
+            rightStr = rightStr.substr(0, rightStr.size() - end);
+        }
+//        cout << "rightStr: " << rightStr << endl;
+//        cout << "substituting back into '" << newOperationStr.str() << '\'' << endl;
+//        cout << "start: " << start << endl;
+//        cout << "end: " << end << endl;
 
-    // (M)ultiplication
+        localResult = sqrt(stod(rightStr));
+//        cout << localResult << endl;
+
+        oldOperationStr = newOperationStr.str();
+        newOperationStr.str("");
+        newOperationStr << oldOperationStr.substr(0, start);
+        newOperationStr << fixed << setprecision(2) << localResult;
+        if (end < oldOperationStr.size()) {
+            newOperationStr << oldOperationStr.substr(end);
+        }
+    }
+
     // -----------------
-    // (D)ivision
-    // -----------------
-    // (A)ddition
-    vector<string> operators = {"*/", "+-"};
+    // Do (E)xponents, (M)ultiplication, (D)ivision, (A)ddition, (S)ubtraction
+    //
+    vector<string> operators = {"^", "*/", "+-"};
     for (string operatorType : operators) {
         while (newOperationStr.str().find_first_of(operatorType) != string::npos) {
-            // Left and right sides of operation
-            string leftStr, rightStr;
-            double left, right, result = 0;
-
-            // Indexes within newOperationStr
-            // used to substitute in result
-            int start, end;
 
             //
             // Find first instance of operation
@@ -272,7 +339,7 @@ double doOperation(const string &operationStr)
             int operatorLoc = newOperationStr.str().find_first_of(operatorType);
 
             //
-            // Find start operation (left-hand side)
+            // Find start of expression (left-hand side)
             //
             start = operatorLoc - 1;
             leftStr = newOperationStr.str().substr(0, operatorLoc);
@@ -282,7 +349,7 @@ double doOperation(const string &operationStr)
             }
 
             //
-            // Find end of operation (right-hand side)
+            // Find end of expression (right-hand side)
             //
             end = operatorLoc + 1;
 //        cout << "end: " << end << endl;
@@ -314,6 +381,9 @@ double doOperation(const string &operationStr)
             //
             localExpression = newOperationStr.str().substr(start, end);
             switch (newOperationStr.str().at(operatorLoc)) {
+                case '^':
+                    localResult = pow(left, right);
+                    break;
                 case '*':
                     localResult = left * right;
                     break;
