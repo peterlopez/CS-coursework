@@ -112,7 +112,7 @@ void mainMenu(vector<string> &hist)
         cout << "Please input operation: ";
         string input;
         getline(cin, input);
-        stringstream(input) >> operation;
+        operation = stringstream(input).str();
 
         if (operation == CODE_EXIT) {
             // do nothing
@@ -457,7 +457,7 @@ bool isValidExpression(const string expression)
     // assume the worst
     bool result = false;
 
-    string allowedChars = "0123456789.+-*/^sqrt";
+    string allowedChars = "0123456789.+-*/^sqrt ";
     if (expression.find_first_not_of(allowedChars) == string::npos) {
         if (expression.find("exit"))
         result = true;
