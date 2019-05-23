@@ -222,15 +222,20 @@ void saveHistory(const vector<string> &hist)
 
 double doOperation(const string &operationStr)
 {
-    cout << endl << "-----------------" << endl;
-    cout << "Parsing operation: " << operationStr << endl;
+    cout << "-----------------" << endl;
+    cout << "Start" << endl << "parsing operation: '" << operationStr << '\'' << endl;
 
+    //
     // when each step is solved the answer
     // is substituted back into newOperationStr
+    //
+    // eventually, this is returned as a single number
+    // after all substitutions have been made
+    //
     string newOperationStr = operationStr;
 
-    // this stores a simple operation within each step
-    // i.e. operation inside parenthesis
+    // this stores a single operation within each step
+    // ex. operation inside parenthesis
     string localExpression;
     double localResult;
 
@@ -241,14 +246,16 @@ double doOperation(const string &operationStr)
     // (P)arenthesis
     while (newOperationStr.find('(') != string::npos && newOperationStr.find(')') != string::npos)
     {
-        localExpression = string(operationStr, operationStr.find_first_of('(') + 1, operationStr.find_first_of(')') - operationStr.find_first_of('(') - 1);
-        cout << "found expression in parenthesis: " << localExpression << endl;
-        cout << "result: " << stod(localExpression) << endl;
-        // Substitute back in
+        // Extract and calculate operation within parenthesis
+        localExpression = string(newOperationStr, newOperationStr.find_first_of('(') + 1, newOperationStr.find_first_of(')') - newOperationStr.find_first_of('(') - 1);
+        cout << "doing expression in parenthesis: '" << localExpression << '\'' << endl;
+
+        // Substitute result back in
         localResult = doOperation(localExpression);
         newOperationStr = operationStr.substr(0, operationStr.find_first_of('(')) + to_string(localResult) + operationStr.substr(operationStr.find_first_of(')') + 1);
     }
-    cout << "after parenthesis: " << newOperationStr << endl;
+    cout << "parenthesis done, new string: '" << newOperationStr << '\'' << endl;
+    cout << "-----------------" << endl;
 
     // -----------------
     // (E)xponents
@@ -270,8 +277,13 @@ double doOperation(const string &operationStr)
         int start, end;
 
         //
+        // Find first instance of operation
+        //
         int operatorLoc = newOperationStr.find_first_of(operatorType);
 
+        //
+        // Find start operation (left-hand side)
+        //
         start = operatorLoc - 1;
         leftStr = newOperationStr.substr(0, operatorLoc);
         if (leftStr.size() > 1) {
@@ -279,17 +291,21 @@ double doOperation(const string &operationStr)
             leftStr = leftStr.substr(start);
         }
 
-
+        //
+        // Find end of operation (right-hand side)
+        //
         end = operatorLoc + 1;
-
-
         rightStr = newOperationStr.substr(operatorLoc + 1);
         if (rightStr.size() > 1) {
             int nextOperation = rightStr.find_first_not_of("0123456789.");
-            rightStr = rightStr.substr(0, end);
             end = (nextOperation == string::npos) ? operatorLoc + rightStr.size() + 1 : nextOperation;
+            rightStr = rightStr.substr(0, end);
         }
 
+        //
+        // Extract and calculate single operation
+        //
+        localExpression = newOperationStr.substr(start, end);
         switch(newOperationStr.at(operatorLoc))
         {
             case '+':
@@ -298,10 +314,11 @@ double doOperation(const string &operationStr)
             case '-':
                 localResult = stod(leftStr) - stod(rightStr);
                 break;
+            default:
+                break;
         }
 
-        cout << "----" << endl;
-        cout << "Doing '" << newOperationStr.at(operatorLoc) << '\'' << endl;
+        cout << "Calculating '" << localExpression << '\'' << endl;
         cout << "left: " << leftStr << endl;
         cout << "right: " << rightStr << endl;
         cout << "result: " << localResult << endl;
@@ -311,14 +328,20 @@ double doOperation(const string &operationStr)
         cout << "start: " << start << endl;
         cout << "end: " << end << endl;
 
+        //
         // Substitute result back in
+        //
         newOperationStr = newOperationStr.substr(0, start) + to_string(localResult) + newOperationStr.substr(end);
 
         cout << "after substitution: '" << newOperationStr << '\'' << endl;
+        cout << "----" << endl;
 
         string input;
         getline(cin, input);
     }
+
+    cout << "Returning '" << stod(newOperationStr) << "' from '" << operationStr << '\'' << endl;
+    cout << "----" << endl;
 
     return stod(newOperationStr);
 }
