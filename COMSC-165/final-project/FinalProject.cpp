@@ -95,11 +95,6 @@ void mainMenu(vector<string> &hist)
     string operation = "";
     double result = 0;
 
-    cout << doOperation("1.1+(1.2+2.2)-1.1+5.1");
-    cout << endl;
-
-    return;
-
     while (operation != CODE_EXIT)
     {
         system("clear");
@@ -117,10 +112,10 @@ void mainMenu(vector<string> &hist)
         else if (operation == CODE_HIST) {
             displayAllHistory(hist);
         }
-        else if (operation.at(0) == 'H') {
+        else if (toupper(operation.at(0)) == 'H') {
             int histNum = stoi(string(operation.begin() + 1, operation.end()));
-            if (histNum >= hist.size() || histNum < 0) {
-                cout << "No history entry for '" << histNum << "'" << endl << endl;
+            if (histNum > hist.size() || histNum < 0) {
+                cout << "No history entry for 'H" << histNum << "'" << endl << endl;
             }
             else {
                 result = doOperation(hist.at(histNum - 1));
@@ -253,102 +248,122 @@ double doOperation(const string &operationStr)
     // -----------------
     // (E)xponents
     // -----------------
+
+
     // (M)ultiplication
     // -----------------
     // (D)ivision
     // -----------------
     // (A)ddition
-    string operatorType = "+-";
-    while (newOperationStr.str().find_first_of(operatorType) != string::npos)
-    {
-        // Left and right sides of operation
-        string leftStr, rightStr;
-        double left, right, result = 0;
+    vector<string> operators = {"*/", "+-"};
+    for (string operatorType : operators) {
+        while (newOperationStr.str().find_first_of(operatorType) != string::npos) {
+            // Left and right sides of operation
+            string leftStr, rightStr;
+            double left, right, result = 0;
 
-        // Indexes within newOperationStr
-        // used to substitute in result
-        int start, end;
+            // Indexes within newOperationStr
+            // used to substitute in result
+            int start, end;
 
-        //
-        // Find first instance of operation
-        //
-        int operatorLoc = newOperationStr.str().find_first_of(operatorType);
+            //
+            // Find first instance of operation
+            //
+            int operatorLoc = newOperationStr.str().find_first_of(operatorType);
 
-        //
-        // Find start operation (left-hand side)
-        //
-        start = operatorLoc - 1;
-        leftStr = newOperationStr.str().substr(0, operatorLoc);
-        if (leftStr.size() > 1) {
-            start = leftStr.find_last_not_of("0123456789.") + 1;
-            leftStr = leftStr.substr(start);
-        }
-
-        //
-        // Find end of operation (right-hand side)
-        //
-        end = operatorLoc + 1;
-//        cout << "end: " << end << endl;
-        rightStr = newOperationStr.str().substr(operatorLoc + 1);
-//        cout << "rightStr: " << rightStr << endl;
-        if (rightStr.size() > 1) {
-            int nextOperation = rightStr.find_first_not_of("0123456789.");
-            if (nextOperation == string::npos) {
-                end = operatorLoc + 1 + rightStr.size();
-//                cout << "end: " << end << endl;
-            } else {
-                end = operatorLoc + 1 + nextOperation;
-//                cout << "end: " << end << endl;
+            //
+            // Find start operation (left-hand side)
+            //
+            start = operatorLoc - 1;
+            leftStr = newOperationStr.str().substr(0, operatorLoc);
+            if (leftStr.size() > 1) {
+                start = leftStr.find_last_not_of("0123456789.~") + 1;
+                leftStr = leftStr.substr(start);
             }
-//            cout << "nextOperation: " << nextOperation << endl;
-            rightStr = rightStr.substr(0, rightStr.size() - end);
-//            cout << "rightStr: " << rightStr << endl;
-        }
 
-        //
-        // Extract and calculate single operation
-        //
-        localExpression = newOperationStr.str().substr(start, end);
-        switch(newOperationStr.str().at(operatorLoc))
-        {
-            case '+':
-                localResult = stod(leftStr) + stod(rightStr);
-                break;
-            case '-':
-                localResult = stod(leftStr) - stod(rightStr);
-                break;
-            default:
-                localResult = 9871234;
-                break;
-        }
-
-//        cout << "----" << endl;
-//        cout << "Calculating '" << localExpression << '\'' << endl;
-//        cout << "left: " << leftStr << endl;
-//        cout << "right: " << rightStr << endl;
-//        cout << "result: " << localResult << endl;
-//        cout << endl;
-//        cout << "Substituting back into '" << newOperationStr.str() << "'" << endl;
-//        cout << "start: " << start << endl;
+            //
+            // Find end of operation (right-hand side)
+            //
+            end = operatorLoc + 1;
 //        cout << "end: " << end << endl;
+            rightStr = newOperationStr.str().substr(operatorLoc + 1);
+//        cout << "rightStr: " << rightStr << endl;
+            if (rightStr.size() > 1) {
+                int nextOperation = rightStr.find_first_not_of("0123456789.~");
+                if (nextOperation == string::npos) {
+                    end = operatorLoc + 1 + rightStr.size();
+//                cout << "end: " << end << endl;
+                } else {
+                    end = operatorLoc + 1 + nextOperation;
+//                cout << "end: " << end << endl;
+                }
+//            cout << "nextOperation: " << nextOperation << endl;
+                rightStr = rightStr.substr(0, rightStr.size() - end);
+//            cout << "rightStr: " << rightStr << endl;
+            }
 
-        //
-        // Substitute result back in
-        //
-        oldOperationStr = newOperationStr.str();
-        newOperationStr.str("");
-        newOperationStr << oldOperationStr.substr(0, start);
-        newOperationStr << fixed << setprecision(2) << localResult;
-        if (end < oldOperationStr.size()) {
-            newOperationStr << oldOperationStr.substr(end);
+            //
+            // Account for negative numbers
+            // denoted with tilde '~'
+            //
+            left = (leftStr.find('~') == string::npos) ? stod(leftStr) : -1 * stod(string(leftStr, leftStr.find('~') + 1));
+            right = (rightStr.find('~') == string::npos) ? stod(rightStr) : -1 * stod(string(rightStr, leftStr.find('~') + 1));
+
+            //
+            // Extract and calculate single operation
+            //
+            localExpression = newOperationStr.str().substr(start, end);
+            switch (newOperationStr.str().at(operatorLoc)) {
+                case '*':
+                    localResult = left * right;
+                    break;
+                case '/':
+                    localResult = left / right;
+                    break;
+                case '+':
+                    localResult = left + right;
+                    break;
+                case '-':
+                    localResult = left - right;
+                    break;
+                default:
+                    localResult = 9871234;
+                    break;
+            }
+
+//            cout << "----" << endl;
+//            cout << "Calculating '" << localExpression << '\'' << endl;
+//            cout << "left: " << leftStr << endl;
+//            cout << "right: " << rightStr << endl;
+//            cout << "result: " << localResult << endl;
+//            cout << endl;
+//            cout << "Substituting back into '" << newOperationStr.str() << "'" << endl;
+//            cout << "start: " << start << endl;
+//            cout << "end: " << end << endl;
+
+            //
+            // Substitute result back in
+            //
+            // if result is negative, use '~' instead of '-'
+            //
+            oldOperationStr = newOperationStr.str();
+            newOperationStr.str("");
+            newOperationStr << oldOperationStr.substr(0, start);
+            if (localResult < 0) {
+                newOperationStr << '~' << fixed << setprecision(2) << abs(localResult);
+            } else {
+                newOperationStr << fixed << setprecision(2) << localResult;
+            }
+            if (end < oldOperationStr.size()) {
+                newOperationStr << oldOperationStr.substr(end);
+            }
+
+//            cout << "after substitution: '" << newOperationStr.str() << '\'' << endl;
+//            cout << "----" << endl;
+//            string input;
+//            getline(cin, input);
         }
-
-//        cout << "after substitution: '" << newOperationStr.str() << '\'' << endl;
-//        cout << "----" << endl;
-//        string input;
-//        getline(cin, input);
     }
-
 //    cout << "Returning '" << stod(newOperationStr.str()) << "' from '" << operationStr << '\'' << endl;
 //    cout << "----" << endl;
 
