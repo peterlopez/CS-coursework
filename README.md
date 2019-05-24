@@ -5,7 +5,7 @@ projects from computer science courses
 
 #### Projects
 
-- [String Calculator](https://github.com/peterlopez/CS-coursework/tree/master/COMSC-165/final-project)
+- [String Calculator](https://github.com/peterlopez/CS-coursework/tree/master/COMSC-165/final-project) \
 parses string of mathematical expressions and calculates result
 
 - [Database](https://github.com/peterlopez/CS-coursework/tree/master/COMSC-165/labs/Database) \
