@@ -1,0 +1,36 @@
+java.lang.Throwable: Error: Expected true, found false
+	at SUnit.assertTrue(SUnit.java:104)
+	at SUnitTest.testAssertTrue(SUnitTest.java:73)
+	at SUnitTest.main(SUnitTest.java:42)
+java.lang.Throwable: Error: Expected false, found true
+	at SUnit.assertFalse(SUnit.java:67)
+	at SUnitTest.testAssertFalse(SUnitTest.java:84)
+	at SUnitTest.main(SUnitTest.java:43)
+java.lang.Throwable: Error: Expected X, found Y
+	at SUnit.assertEquals(SUnit.java:31)
+	at SUnitTest.testAssertEqualsLong(SUnitTest.java:95)
+	at SUnitTest.main(SUnitTest.java:44)
+java.lang.Throwable: Error: Expected X +/-E, found Y
+	at SUnit.assertEquals(SUnit.java:19)
+	at SUnitTest.testAssertEqualsDouble(SUnitTest.java:110)
+	at SUnitTest.main(SUnitTest.java:45)
+java.lang.Throwable: Error: Expected X +/-E, found Y
+	at SUnit.assertEquals(SUnit.java:19)
+	at SUnitTest.testAssertEqualsDouble(SUnitTest.java:122)
+	at SUnitTest.main(SUnitTest.java:45)
+java.lang.Throwable: Error: Expected object equality, found inequality
+	at SUnit.assertEqualsObject(SUnit.java:43)
+	at SUnitTest.testAssertEqualsObject(SUnitTest.java:137)
+	at SUnitTest.main(SUnitTest.java:46)
+java.lang.Throwable: Error: Expected reference equality, found inequality
+	at SUnit.assertEqualsReference(SUnit.java:55)
+	at SUnitTest.testAssertEqualsReference(SUnitTest.java:152)
+	at SUnitTest.main(SUnitTest.java:47)
+java.lang.Throwable: Error: Expected null, found non-null
+	at SUnit.assertNull(SUnit.java:92)
+	at SUnitTest.testAssertNull(SUnitTest.java:167)
+	at SUnitTest.main(SUnitTest.java:48)
+java.lang.Throwable: Error: Expected non-null, found null
+	at SUnit.assertNotNull(SUnit.java:80)
+	at SUnitTest.testAssertNotNull(SUnitTest.java:182)
+	at SUnitTest.main(SUnitTest.java:49)

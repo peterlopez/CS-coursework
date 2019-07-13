@@ -16,3 +16,5 @@ uses binary search for querying values
 created an encoding algorithm for compressing text files
 
 ## [Advanced Java Programming](https://github.com/peterlopez/CS-coursework/tree/master/CS-256)
+
+## [Basic Java Programming](https://github.com/peterlopez/CS-coursework/tree/master/CPE-102)
