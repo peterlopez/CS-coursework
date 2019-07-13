@@ -1,12 +1,7 @@
 # CS coursework
 projects I completed from computer science courses at various colleges
 
-<a href="http://calpoly.edu" title="Cal Poly"><img src="https://github.com/peterlopez/CS-coursework/blob/master/calpoly.png" width="250" height="250" /></a>
-
-<a href="http://dvc.edu" title="Diablo Valley College"><img src="https://github.com/peterlopez/CS-coursework/blob/master/dvc.jpg" width="250" height="250" /></a>
-
-<a href="http://www.orangecoastcollege.edu" title="Orange Coast College"><img src="https://github.com/peterlopez/CS-coursework/blob/master/occ.jpg" width="250" height="250" /></a>
-
+<a href="http://calpoly.edu" title="Cal Poly"><img src="https://github.com/peterlopez/CS-coursework/blob/master/calpoly.png" width="75" height="75" /></a>   <a href="http://dvc.edu" title="Diablo Valley College"><img src="https://github.com/peterlopez/CS-coursework/blob/master/dvc.jpg" width="75" height="75" /></a>   <a href="http://www.orangecoastcollege.edu" title="Orange Coast College"><img src="https://github.com/peterlopez/CS-coursework/blob/master/occ.jpg" width="75" height="75" /></a>  
 
 ## [Advanced C++ Programming](https://github.com/peterlopez/CS-coursework/tree/master/COMSC%20165)
 
