@@ -1,7 +1,11 @@
+# IDE files
 .idea
+.vs
+
 cmake-build-debug
+out
+
 peer-reviews
 calc.txt
-FinalProject
 textbook*
 syllabus*
