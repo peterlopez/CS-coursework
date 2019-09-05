@@ -1,0 +1,5 @@
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(SOURCE_FILES peter_ruszel_260_assign2.cpp)
+add_executable(Assignment2 ${SOURCE_FILES})
