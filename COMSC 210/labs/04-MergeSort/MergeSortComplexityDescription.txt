@@ -1,0 +1,5 @@
+The time complexity of the Merge Sort Algorithm is O(N*logN). This means that for a given number of elements, N, the amount of computations required before the list is sorted is equal to the formula N*logN.
+
+There are best and worst case scenarios for every algorithm. For example, if a list has all elements sorted except one (best case) or if a list needs all elements to be moved (worst case). The Merge Sort Algorithm however has the same complexity for all scenarios. This is due to the Merge Sort Algorithm's unique method of sorting.
+
+Merge Sort takes the divide-and-conquer approach, aiming to split up the work of sorting into smaller pieces. This is because it is faster and easier to compare 2 elements at a time than it is to compare 1 element with all the others, like some other sorting algorithms do. Once the list is broken down into many small pieces, each piece can be assembled back together in a sorted order until the list has all elements back in their sorted position.
